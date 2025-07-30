@@ -60,12 +60,13 @@ func ListenPacket(network, address, sourceInterface string) (*PacketConn, error)
 
 	lc := net.ListenConfig{
 		Control: func(network, address string, c syscall.RawConn) (err error) {
+			var bindErr error
 			ctrlErr := c.Control(func(fd uintptr) {
-				bindErr := bindInterface(int(fd), sourceInterface)
-				if bindErr != nil {
-					return
-				}
+				bindErr = bindInterface(int(fd), sourceInterface)
 			})
+			if bindErr != nil {
+				return bindErr
+			}
 			return ctrlErr
 		},
 	}
