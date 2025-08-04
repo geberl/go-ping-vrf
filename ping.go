@@ -49,7 +49,6 @@
 // it calls the OnFinish callback.
 //
 // For a full ping example, see "cmd/ping/ping.go".
-//
 package ping
 
 import (
@@ -680,6 +679,9 @@ func (p *Pinger) sendICMP(conn *PacketConn) error {
 		p.awaitingSequences[p.sequence] = struct{}{}
 		p.PacketsSent++
 		p.sequence++
+		if p.sequence > 65535 {
+			p.sequence = 0
+		}
 		break
 	}
 
